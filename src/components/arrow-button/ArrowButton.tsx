@@ -14,14 +14,17 @@ export const ArrowButton = ({
 	setIsOpenArrow,
 	isOpenArrow,
 }: ArrowButtonProps) => {
-	return (
-		/* Не забываем указаывать role и aria-label атрибуты для интерактивных элементов */
+	const handleClick = (event: React.MouseEvent) => {
+		event.stopPropagation(); // Останавливаем всплытие события
+		setIsOpenArrow(!isOpenArrow);
+	};
 
+	return (
 		<div
 			role='button'
 			aria-label='Открыть/Закрыть форму параметров статьи'
 			tabIndex={0}
-			onClick={() => setIsOpenArrow(!isOpenArrow)}
+			onClick={handleClick} // Вызываем обновленную функцию
 			className={clsx(styles.container, isOpenArrow && styles.container_open)}>
 			<img
 				src={arrow}

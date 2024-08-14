@@ -2,7 +2,7 @@ import { ArrowButton } from 'components/arrow-button';
 import { Button } from 'components/button';
 
 import styles from './ArticleParamsForm.module.scss';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState, useRef } from 'react';
 import clsx from 'clsx';
 import {
 	ArticleStateType,
@@ -17,6 +17,7 @@ import { Select } from '../select';
 import { Text } from '../text';
 import { Separator } from '../separator';
 import { RadioGroup } from '../radio-group';
+import { useOutsideClickClose } from '../select/hooks/useOutsideClickClose';
 
 type ArticleParamsFormProps = {
 	articleState: ArticleStateType;
@@ -33,6 +34,15 @@ export const ArticleParamsForm = ({
 	const [selectedArticleState, setSelectedArticleState] =
 		useState(articleState);
 
+	const formRef = useRef<HTMLDivElement>(null);
+
+	useOutsideClickClose({
+		isOpen: isOpenForm,
+		rootRef: formRef,
+		onClose: () => setIsOpenForm(false),
+		onChange: setIsOpenForm,
+	});
+
 	const changePage = (evt: FormEvent) => {
 		evt.preventDefault();
 		setArticleStateForm(selectedArticleState);
@@ -40,6 +50,7 @@ export const ArticleParamsForm = ({
 
 	const resetPage = () => {
 		setArticleStateForm(defaultArticleState);
+		setSelectedArticleState(defaultArticleState);
 	};
 
 	const chooseBackgroundColor = (selectedItem: OptionType) => {
@@ -82,7 +93,11 @@ export const ArticleParamsForm = ({
 			<ArrowButton isOpenArrow={isOpenForm} setIsOpenArrow={setIsOpenForm} />
 			<aside
 				className={clsx(styles.container, isOpenForm && styles.container_open)}>
-				<form className={styles.form} onSubmit={changePage} onReset={resetPage}>
+				<form
+					className={styles.form}
+					onSubmit={changePage}
+					onReset={resetPage}
+					onClick={(e) => e.stopPropagation()}>
 					<Text as='h2' size={31} uppercase={true} weight={800}>
 						Задайте параметры
 					</Text>
